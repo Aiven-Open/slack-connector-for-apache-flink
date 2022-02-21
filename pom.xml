@@ -23,7 +23,7 @@
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
         <spotless-maven-plugin.version>2.20.2</spotless-maven-plugin.version>
         <log4j.version>2.17.1</log4j.version>
-        <slf4j-api.version>1.7.35</slf4j-api.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
 
         <javax.websocket-api.version>1.1</javax.websocket-api.version>
         <!-- TODO upgrade to 2.0 in the next major version
