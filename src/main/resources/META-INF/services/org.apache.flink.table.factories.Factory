@@ -1,0 +1,2 @@
+io.aiven.flink.connectors.slack.source.FlinkSlackConnectorTableSourceFactory
+io.aiven.flink.connectors.slack.sink.SlackTableSinkFactory
