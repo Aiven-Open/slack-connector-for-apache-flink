@@ -5,12 +5,15 @@ import org.apache.flink.table.connector.ChangelogMode;
 import org.apache.flink.table.connector.sink.DynamicTableSink;
 import org.apache.flink.table.connector.sink.SinkFunctionProvider;
 import org.apache.flink.table.data.RowData;
+import org.apache.flink.table.types.DataType;
 
 public class SlackSink implements DynamicTableSink {
   private final String token;
+  private final DataType rowType;
 
-  public SlackSink(String token) {
+  public SlackSink(DataType rowType, String token) {
     this.token = token;
+    this.rowType = rowType;
   }
 
   @Override
@@ -20,13 +23,13 @@ public class SlackSink implements DynamicTableSink {
 
   @Override
   public SinkRuntimeProvider getSinkRuntimeProvider(Context context) {
-    final SinkFunction<RowData> sinkFunction = new FlinkSlackSinkFunction(token);
+    final SinkFunction<RowData> sinkFunction = new FlinkSlackSinkFunction(rowType, token);
     return SinkFunctionProvider.of(sinkFunction);
   }
 
   @Override
   public DynamicTableSink copy() {
-    return new SlackSink(token);
+    return new SlackSink(rowType, token);
   }
 
   @Override

@@ -21,7 +21,6 @@ import org.apache.flink.table.catalog.Column;
 import org.apache.flink.table.catalog.ResolvedSchema;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public class FlinkSlackIntegrationTest {
 
@@ -48,7 +47,7 @@ public class FlinkSlackIntegrationTest {
     wsServer.stop();
   }
 
-  @Test
+  // @Test
   public void messageFromFlink() throws Exception {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     env.setParallelism(8);
@@ -60,7 +59,7 @@ public class FlinkSlackIntegrationTest {
             Column.metadata("description", DataTypes.STRING().nullable(), "title", false));
     tableEnv
         .executeSql(
-            "CREATE TEMPORARY TABLE rss ( \n"
+            "CREATE TEMPORARY TABLE slack_table ( \n"
                 + "  `title` STRING,\n"
                 + "  `description` STRING \n"
                 + ") WITH (\n"
@@ -74,7 +73,7 @@ public class FlinkSlackIntegrationTest {
     for (int i = 0; i < 10; i++) {
       tableEnv
           .fromValues(schema.toSinkRowDataType(), row("C111", "Message content"))
-          .executeInsert("rss")
+          .executeInsert("slack_table")
           .await();
     }
 
