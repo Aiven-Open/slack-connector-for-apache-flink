@@ -67,7 +67,7 @@ public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
   }
 
   public enum SlackColumns {
-    BLOCKS_AS_STRING("blocks_as_str", "blocks_as_string"),
+    BLOCKS_AS_STRING("blocks_as_str", "blocks_as_string", "formatted"),
     CHANNEL("channel_id", "channel"),
     THREAD("thread_id", "thread"),
     TEXT("text", "message");
@@ -106,7 +106,8 @@ public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
     }
   }
 
-  public static List<String> getFieldNames(DataType dataType) {
+  // TODO: Replace this with DataType#getFieldNames with upgrade to Flink 1.15.x
+  private static List<String> getFieldNames(DataType dataType) {
     final LogicalType type = dataType.getLogicalType();
     if (type.getTypeRoot() == LogicalTypeRoot.DISTINCT_TYPE) {
       return getFieldNames(dataType.getChildren().get(0));
