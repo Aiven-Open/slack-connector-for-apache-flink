@@ -62,11 +62,12 @@ CREATE TEMPORARY TABLE slack_example_formatted (
 ```
 Now to send a formatted message to channel_id `CHANNEL_ID`
 ```sql
-INSERT INTO slack_example VALUES('CHANNEL_ID', CAST(NULL AS STRING), '[{"type": "divider"}]');
+INSERT INTO slack_example_formatted VALUES('CHANNEL_ID', CAST(NULL AS STRING), '[{"type": "divider"}]');
 ```
 And similar message replying to `THREAD_ID`
 ```sql
-INSERT INTO slack_example VALUES('CHANNEL_ID', 'THREAD_ID', '[{"type": "divider"}]');
+INSERT INTO slack_example_formatted VALUES('CHANNEL_ID', 'THREAD_ID', '[{"type": "divider"}]');
 ```
 
-A more examples of formatted messages could be found at [block-kit-builder](https://app.slack.com/block-kit-builder) 
+A more examples of formatted messages could be found at [block-kit-builder](https://app.slack.com/block-kit-builder)
+Note: in `formatted` there should be passed only value for `blocks`.
