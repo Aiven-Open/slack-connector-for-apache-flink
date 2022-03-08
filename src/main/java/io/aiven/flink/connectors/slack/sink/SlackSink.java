@@ -31,6 +31,6 @@ public class SlackSink implements DynamicTableSink {
 
   @Override
   public String asSummaryString() {
-    return "test";
+    return "Slack sink";
   }
 }

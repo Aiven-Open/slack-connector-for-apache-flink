@@ -119,7 +119,7 @@ public class FlinkSlackIntegrationTest {
     };
   }
 
-  private static List<String> MESSAGE_TYPES =
+  private static final List<String> MESSAGE_TYPES =
       Arrays.asList("events", "interactive", "slash_commands");
 
   private static WebSocketMessageListener envelopeListener(AtomicBoolean received) {

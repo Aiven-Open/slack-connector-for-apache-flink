@@ -22,7 +22,7 @@
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
         <spotless-maven-plugin.version>2.20.2</spotless-maven-plugin.version>
-        <log4j.version>2.17.1</log4j.version>
+        <log4j.version>2.17.2</log4j.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
 
         <javax.websocket-api.version>1.1</javax.websocket-api.version>
@@ -38,7 +38,7 @@
         <okhttp.version>4.9.3</okhttp.version>
         <gson.version>2.9.0</gson.version>
         <jetty-for-tests.version>9.4.45.v20220203</jetty-for-tests.version>
-        <slack.version>1.18.0</slack.version>
+        <slack.version>1.20.0</slack.version>
     </properties>
 
     <dependencies>
