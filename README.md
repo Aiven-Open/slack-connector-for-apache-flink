@@ -5,6 +5,8 @@ Flink connector for Slack
 1. Create your Slack app at [Slack API](https://api.slack.com/apps)
 2. In Oauth & Permissions in Scopes add `chat:write`
 3. In Oauth & Permissions copy `Bot User OAuth Token` and use for placeholder `BOT_USER_OAUTH_ACCESS_TOKEN`
+4. Reinstall the app
+5. Add app to the channel where it should post 
 
 ## Send message
 
