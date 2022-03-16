@@ -1,5 +1,4 @@
-# Flink-slack-connector
-Flink connector for Slack
+# Slack Connector for Apache Flink®
 
 ## Set-up Slack Application
 1. Create your Slack app at [Slack API](https://api.slack.com/apps)
@@ -73,3 +72,9 @@ INSERT INTO slack_example_formatted VALUES('CHANNEL_ID', 'THREAD_ID', '[{"type":
 
 A more examples of formatted messages could be found at [block-kit-builder](https://app.slack.com/block-kit-builder)
 Note: in `formatted` there should be passed only value for `blocks`.
+
+## Trademarks
+
+Apache Flink is either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries. Google Cloud Storage (GCS) is a trademark and property of their respective owners. All product and service names used in this website are for identification purposes only and do not imply endorsement.
+
+Slack is a trademark and service mark of Slack Technologies, Inc., registered in the U.S. and in other countries.
