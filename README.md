@@ -75,6 +75,6 @@ Note: in `formatted` there should be passed only value for `blocks`.
 
 ## Trademarks
 
-Apache Flink is either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries. Google Cloud Storage (GCS) is a trademark and property of their respective owners. All product and service names used in this website are for identification purposes only and do not imply endorsement.
+Apache Flink is either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries.
 
 Slack is a trademark and service mark of Slack Technologies, Inc., registered in the U.S. and in other countries.
