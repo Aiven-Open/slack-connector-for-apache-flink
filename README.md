@@ -1,5 +1,12 @@
 # Slack Connector for Apache Flink®
 
+## Compatibility matrix
+
+|Apache Flink |Slack Connector for Apache Flink|Release date|
+--------------|--------------------------------|-----------
+|1.15.x|1.15.0|TBD|
+|1.14.x|1.14.0|TBD|
+
 ## Set-up Slack Application
 1. Create your Slack app at [Slack API](https://api.slack.com/apps)
 2. In Oauth & Permissions in Scopes add `chat:write`
