@@ -2,10 +2,13 @@
 
 ## Compatibility matrix
 
-|Apache Flink |Slack Connector for Apache Flink|Release date|
---------------|--------------------------------|-----------
-|1.15.x|1.15.0|TBD|
-|1.14.x|1.14.0|TBD|
+| Apache Flink    | Slack Connector for Apache Flink | Release date |
+-----------------|----------------------------------|--------------
+| 1.14.x - 1.15.x | v1.0                             | 17.10.2022   |
+| 1.15.x - 1.16.x | v2.0                             | TBD          |
+
+To start using Slack connector for Flink put `flink-slack-connector-<version>.jar`
+to `lib/` folder of Flink and restart Flink.
 
 ## Set-up Slack Application
 1. Create your Slack app at [Slack API](https://api.slack.com/apps)
