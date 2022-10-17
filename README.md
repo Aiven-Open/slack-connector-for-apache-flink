@@ -11,16 +11,20 @@ To start using Slack connector for Flink put `flink-slack-connector-<version>.ja
 to `lib/` folder of Flink and restart Flink.
 
 ## Set-up Slack Application
+
+If youre new to the slack platform, there's a lot of information at [An introduction to the Slack platform](https://api.slack.com/start/overview).
+
 1. Create your Slack app at [Slack API](https://api.slack.com/apps)
 2. In Oauth & Permissions in Scopes add `chat:write`
-3. In Oauth & Permissions copy `Bot User OAuth Token` and use for placeholder `BOT_USER_OAUTH_ACCESS_TOKEN`
+3. In Oauth & Permissions copy `Bot User OAuth Token` and use for placeholder `[BOT_USER_OAUTH_ACCESS_TOKEN]`
 4. Reinstall the app
 5. Add app to the channel where it should post 
 
 ## Send message
 
-Messages could be sent in plain text or formatted way. Also, messages could be sent as normal messages or as replies.
-To send messages it is required that app has `chat:write` permission and bot is added to channel where a message should be post.
+Messages can be sent as plain text or formatted. Also, messages can be sent as normal messages or as replies.
+
+To send a messages it is required that the app has `chat:write` permission and the bot is added to the channel where the message should be posted.
 
 First create table
 ```sql
@@ -29,17 +33,20 @@ CREATE TEMPORARY TABLE slack_example (
     `message` STRING 
 ) WITH (
     'connector' = 'slack-connector',
-    'token' = BOT_USER_OAUTH_ACCESS_TOKEN
+    'token' = '[BOT_USER_OAUTH_ACCESS_TOKEN]'
 );
 ```
-To be able to send messages in a table there should be column with name `channel_id` and `message` (or `text`).
-Now to send a simple plain text message to channel_id `CHANNEL_ID`
+To be able to send messages in a table there should be columns with names `channel_id` and `message` (or `text`).
+
+To send a simple plain text message to channel_id `CHANNEL_ID`
 ```sql
 INSERT INTO slack_example VALUES('CHANNEL_ID', 'Hello world!');
 ```
 
+Note: `CHANNEL_ID` can be the id of the channel, or its name. However, the name can change, while the id cannot.
+
 ### Send message as reply
-To send message as reply it is required to specify `thread` to reply.
+To send a message as a reply it is required to specify the `thread` to reply to.
 ```sql
 CREATE TEMPORARY TABLE slack_example_with_reply (
     `channel_id` STRING,
@@ -47,20 +54,20 @@ CREATE TEMPORARY TABLE slack_example_with_reply (
     `message` STRING 
 ) WITH (
     'connector' = 'slack-connector',
-    'token' = BOT_USER_OAUTH_ACCESS_TOKEN
+    'token' = '[BOT_USER_OAUTH_ACCESS_TOKEN]'
 );
 ```
-Now to reply a simple plain text message to thread `THREAD_ID` in channel_id `CHANNEL_ID`
+To reply with a simple plain text message to thread `[THREAD_ID]` in channel_id `[CHANNEL_ID]`
 ```sql
-INSERT INTO slack_example_with_reply VALUES('CHANNEL_ID', 'THREAD_ID', 'Hello world!');
+INSERT INTO slack_example_with_reply VALUES('[CHANNEL_ID]', '[THREAD_ID]', 'Hello world!');
 ```
-In case `THREAD_ID` is null it will be a normal message e.g.
+If `[THREAD_ID]` is null then it will be a normal message (not in a thread) e.g.
 ```sql
-INSERT INTO slack_example_with_reply VALUES('CHANNEL_ID', CAST(NULL AS STRING), 'Hello world!');
+INSERT INTO slack_example_with_reply VALUES('[CHANNEL_ID]', CAST(NULL AS STRING), 'Hello world!');
 ```
 
 ### Send formatted message
-To send formatted message there should be `blocks_as_str` column
+To send a formatted message there should be a `formatted` column
 ```sql
 CREATE TEMPORARY TABLE slack_example_formatted (
     `channel_id` STRING,
@@ -68,20 +75,21 @@ CREATE TEMPORARY TABLE slack_example_formatted (
     `formatted` STRING 
 ) WITH (
     'connector' = 'slack-connector',
-    'token' = BOT_USER_OAUTH_ACCESS_TOKEN
+    'token' = '[BOT_USER_OAUTH_ACCESS_TOKEN]'
 );
 ```
-Now to send a formatted message to channel_id `CHANNEL_ID`
+To send a formatted message to channel_id `[CHANNEL_ID]`
 ```sql
-INSERT INTO slack_example_formatted VALUES('CHANNEL_ID', CAST(NULL AS STRING), '[{"type": "divider"}]');
+INSERT INTO slack_example_formatted VALUES('[CHANNEL_ID]', CAST(NULL AS STRING), '[{"type": "divider"}]');
 ```
-And similar message replying to `THREAD_ID`
+And a similar message replying to `[THREAD_ID]`
 ```sql
-INSERT INTO slack_example_formatted VALUES('CHANNEL_ID', 'THREAD_ID', '[{"type": "divider"}]');
+INSERT INTO slack_example_formatted VALUES('[CHANNEL_ID]', '[THREAD_ID]', '[{"type": "divider"}]');
 ```
 
-A more examples of formatted messages could be found at [block-kit-builder](https://app.slack.com/block-kit-builder)
-Note: in `formatted` there should be passed only value for `blocks`.
+More examples of formatted messages can be found at [block-kit-builder](https://app.slack.com/block-kit-builder)
+
+Note: the text `formatted` should be the value for `blocks`, do not specify the `"blocks"` key itself.
 
 ## Trademarks
 
