@@ -6,22 +6,22 @@
 
     <groupId>io.aiven.flink</groupId>
     <artifactId>flink-slack-connector</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <assertj.core.version>3.22.0</assertj.core.version>
-        <flink.version>1.14.3</flink.version>
+        <assertj.core.version>3.23.1</assertj.core.version>
+        <flink.version>1.15.2</flink.version>
         <java.version>11</java.version>
         <jersey.client>1.19.4</jersey.client>
-        <junit.version>5.8.2</junit.version>
+        <junit.version>5.9.1</junit.version>
         <guava.version>31.0.1-jre</guava.version>
         <scala.binary.version>2.12</scala.binary.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        <spotless-maven-plugin.version>2.20.2</spotless-maven-plugin.version>
+        <spotless-maven-plugin.version>2.27.2</spotless-maven-plugin.version>
         <log4j.version>2.17.2</log4j.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
 
@@ -38,13 +38,13 @@
         <okhttp.version>4.9.3</okhttp.version>
         <gson.version>2.9.0</gson.version>
         <jetty-for-tests.version>9.4.45.v20220203</jetty-for-tests.version>
-        <slack.version>1.20.0</slack.version>
+        <slack.version>1.25.1</slack.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
+            <artifactId>flink-table-api-java-bridge</artifactId>
             <version>${flink.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -89,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients_${scala.binary.version}</artifactId>
+            <artifactId>flink-clients</artifactId>
             <version>${flink.version}</version>
             <scope>test</scope>
         </dependency>
