@@ -32,7 +32,7 @@ public class FlinkSlackConnectorIntegrationTest {
                 + "  `channel_id` STRING,\n"
                 + "  `message` STRING \n"
                 + ") WITH (\n"
-                + "  'connector' = 'slack-connector',"
+                + "  'connector' = 'slack',"
                 + "  'token' = '"
                 + BOT_TOKEN
                 + "'"
@@ -62,7 +62,7 @@ public class FlinkSlackConnectorIntegrationTest {
             + "  `client_msg_id` STRING,\n"
             + "  `text` STRING \n"
             + ") WITH (\n"
-            + "  'connector' = 'slack-connector',"
+            + "  'connector' = 'slack',"
             + "  'apptoken' = '"
             + APP_TOKEN
             + "'"
