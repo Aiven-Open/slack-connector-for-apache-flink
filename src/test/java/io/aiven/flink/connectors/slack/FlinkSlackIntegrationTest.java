@@ -63,7 +63,7 @@ public class FlinkSlackIntegrationTest {
                 + "  `title` STRING,\n"
                 + "  `description` STRING \n"
                 + ") WITH (\n"
-                + "  'connector' = 'slack-connector',"
+                + "  'connector' = 'slack',"
                 + "  'token' = '"
                 + VALID_APP_TOKEN
                 + "'"

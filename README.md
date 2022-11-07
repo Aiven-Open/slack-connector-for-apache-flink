@@ -28,7 +28,7 @@ CREATE TEMPORARY TABLE slack_example (
     `channel_id` STRING,
     `message` STRING 
 ) WITH (
-    'connector' = 'slack-connector',
+    'connector' = 'slack',
     'token' = BOT_USER_OAUTH_ACCESS_TOKEN
 );
 ```
@@ -46,7 +46,7 @@ CREATE TEMPORARY TABLE slack_example_with_reply (
     `thread` STRING,
     `message` STRING 
 ) WITH (
-    'connector' = 'slack-connector',
+    'connector' = 'slack',
     'token' = BOT_USER_OAUTH_ACCESS_TOKEN
 );
 ```
@@ -67,7 +67,7 @@ CREATE TEMPORARY TABLE slack_example_formatted (
     `thread` STRING,
     `formatted` STRING 
 ) WITH (
-    'connector' = 'slack-connector',
+    'connector' = 'slack',
     'token' = BOT_USER_OAUTH_ACCESS_TOKEN
 );
 ```

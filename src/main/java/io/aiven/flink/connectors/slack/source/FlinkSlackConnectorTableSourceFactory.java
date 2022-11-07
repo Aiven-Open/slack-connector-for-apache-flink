@@ -37,7 +37,7 @@ public class FlinkSlackConnectorTableSourceFactory implements DynamicTableSource
 
   @Override
   public String factoryIdentifier() {
-    return "slack-connector";
+    return "slack";
   }
 
   @Override

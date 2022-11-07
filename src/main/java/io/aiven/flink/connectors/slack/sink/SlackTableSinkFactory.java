@@ -23,7 +23,7 @@ public class SlackTableSinkFactory implements DynamicTableSinkFactory {
 
   @Override
   public String factoryIdentifier() {
-    return "slack-connector";
+    return "slack";
   }
 
   @Override
