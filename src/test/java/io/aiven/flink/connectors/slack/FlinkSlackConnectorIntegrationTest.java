@@ -35,23 +35,12 @@ class FlinkSlackConnectorIntegrationTest {
 
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
-
+    final String tableName = "slack_alarm";
     final ResolvedSchema schema =
         ResolvedSchema.of(
             Column.metadata("channel_id", DataTypes.STRING().nullable(), "channel_id", false),
             Column.metadata("message", DataTypes.STRING().nullable(), "message", false));
-    tableEnv
-        .executeSql(
-            "CREATE TEMPORARY TABLE slack_alarm ( \n"
-                + "  `channel_id` STRING,\n"
-                + "  `message` STRING \n"
-                + ") WITH (\n"
-                + "  'connector' = 'slack',"
-                + "  'token' = '"
-                + BOT_TOKEN
-                + "'"
-                + ")")
-        .await();
+    tableEnv.executeSql(constructCreateTableSql(schema, tableName)).await();
 
     tableEnv
         .fromValues(
@@ -63,7 +52,42 @@ class FlinkSlackConnectorIntegrationTest {
                     + testInfo.getTestClass().get().getName()
                     + "#"
                     + testInfo.getTestMethod().get().getName()))
-        .executeInsert("slack_alarm")
+        .executeInsert(tableName)
+        .await();
+  }
+
+  @Test
+  void testSinkFormatted(TestInfo testInfo) throws Exception {
+
+    StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+    StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
+
+    final String tableName = "slack_alarm_formatted";
+    final ResolvedSchema schema =
+        ResolvedSchema.of(
+            Column.metadata("channel_id", DataTypes.STRING().nullable(), "channel_id", false),
+            Column.metadata("formatted", DataTypes.STRING().nullable(), "message", false));
+    tableEnv.executeSql(constructCreateTableSql(schema, tableName)).await();
+
+    tableEnv
+        .fromValues(
+            schema.toSinkRowDataType(),
+            row(
+                CHANNEL_ID,
+                "[{\n"
+                    + "\"type\": \"section\",\n"
+                    + " \"text\": {\n"
+                    + " \"type\": \"mrkdwn\",\n"
+                    + " \"text\": \""
+                    + LocalDateTime.now()
+                    + " Hello \uD83D\uDC4B from *"
+                    + testInfo.getTestClass().get().getName()
+                    + "#"
+                    + testInfo.getTestMethod().get().getName()
+                    + "*\"\n"
+                    + " }\n"
+                    + " }]"))
+        .executeInsert(tableName)
         .await();
   }
 
@@ -93,5 +117,23 @@ class FlinkSlackConnectorIntegrationTest {
     DataStream<Row> rowDataStream = tableEnv.toDataStream(tableResult);
     rowDataStream.print();
     env.execute("Slack connector example Job");
+  }
+
+  private String constructCreateTableSql(ResolvedSchema schema, String tableName) {
+    StringBuilder result =
+        new StringBuilder("CREATE TEMPORARY TABLE ").append(tableName).append(" (");
+    for (int i = 0; i < schema.getColumnCount(); i++) {
+      Column column = schema.getColumn(i).get();
+      result
+          .append("\n  `")
+          .append(column.getName())
+          .append("` ")
+          .append(column.getDataType().toString());
+      if (i < schema.getColumnCount() - 1) {
+        result.append(",");
+      }
+    }
+    result.append(") WITH (\n  'connector' = 'slack',  'token' = '").append(BOT_TOKEN).append("')");
+    return result.toString();
   }
 }

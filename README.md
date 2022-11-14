@@ -72,7 +72,7 @@ INSERT INTO slack_example_with_reply VALUES('CHANNEL_ID', CAST(NULL AS STRING), 
 ```
 
 ### Send formatted message
-To send formatted message there should be `blocks_as_str` column
+To send formatted message there should be `blocks_as_str` or `formatted` column
 ```sql
 CREATE TEMPORARY TABLE slack_example_formatted (
     `channel_id` STRING,
