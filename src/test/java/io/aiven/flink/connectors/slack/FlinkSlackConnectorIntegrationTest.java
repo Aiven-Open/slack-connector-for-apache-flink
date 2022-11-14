@@ -43,15 +43,7 @@ class FlinkSlackConnectorIntegrationTest {
     tableEnv.executeSql(constructCreateTableSql(schema, tableName)).await();
 
     tableEnv
-        .fromValues(
-            schema.toSinkRowDataType(),
-            row(
-                CHANNEL_ID,
-                LocalDateTime.now()
-                    + ": Hello world message from "
-                    + testInfo.getTestClass().get().getName()
-                    + "#"
-                    + testInfo.getTestMethod().get().getName()))
+        .fromValues(schema.toSinkRowDataType(), row(CHANNEL_ID, getMessageForSlack(testInfo)))
         .executeInsert(tableName)
         .await();
   }
@@ -71,22 +63,7 @@ class FlinkSlackConnectorIntegrationTest {
 
     tableEnv
         .fromValues(
-            schema.toSinkRowDataType(),
-            row(
-                CHANNEL_ID,
-                "[{\n"
-                    + "\"type\": \"section\",\n"
-                    + " \"text\": {\n"
-                    + " \"type\": \"mrkdwn\",\n"
-                    + " \"text\": \""
-                    + LocalDateTime.now()
-                    + " Hello \uD83D\uDC4B from *"
-                    + testInfo.getTestClass().get().getName()
-                    + "#"
-                    + testInfo.getTestMethod().get().getName()
-                    + "*\"\n"
-                    + " }\n"
-                    + " }]"))
+            schema.toSinkRowDataType(), row(CHANNEL_ID, getFormattedMessageForSlack(testInfo)))
         .executeInsert(tableName)
         .await();
   }
@@ -135,5 +112,39 @@ class FlinkSlackConnectorIntegrationTest {
     }
     result.append(") WITH (\n  'connector' = 'slack',  'token' = '").append(BOT_TOKEN).append("')");
     return result.toString();
+  }
+
+  private String getMessageForSlack(TestInfo testInfo) {
+    return LocalDateTime.now()
+        + ": Hello world message from "
+        + "Java "
+        + System.getProperty("java.version")
+        + " "
+        + System.getProperty("os.name")
+        + "\n "
+        + testInfo.getTestClass().get().getName()
+        + "#"
+        + testInfo.getTestMethod().get().getName();
+  }
+
+  private String getFormattedMessageForSlack(TestInfo testInfo) {
+    return "[{\n"
+        + "\"type\": \"section\",\n"
+        + " \"text\": {\n"
+        + " \"type\": \"mrkdwn\",\n"
+        + " \"text\": \""
+        + LocalDateTime.now()
+        + " Hello \uD83D\uDC4B from "
+        + "Java "
+        + System.getProperty("java.version")
+        + " "
+        + System.getProperty("os.name")
+        + "\n*"
+        + testInfo.getTestClass().get().getName()
+        + "#"
+        + testInfo.getTestMethod().get().getName()
+        + "*\"\n"
+        + " }\n"
+        + " }]";
   }
 }
