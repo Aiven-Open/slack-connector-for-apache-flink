@@ -2,6 +2,7 @@ package io.aiven.flink.connectors.slack;
 
 import static org.apache.flink.table.api.Expressions.row;
 
+import java.time.LocalDateTime;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.DataTypes;
@@ -10,13 +11,19 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.catalog.Column;
 import org.apache.flink.table.catalog.ResolvedSchema;
 import org.apache.flink.types.Row;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 public class FlinkSlackConnectorIntegrationTest {
+
   private static final String BOT_TOKEN = ":bot_token";
+  private static final String CHANNEL_ID = "channel_id";
   private static final String APP_TOKEN = ":app_token";
 
-  // @Test
-  public void testSink() throws Exception {
+  @Disabled
+  @Test
+  public void testSink(TestInfo testInfo) throws Exception {
 
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     env.setParallelism(8);
@@ -39,12 +46,18 @@ public class FlinkSlackConnectorIntegrationTest {
                 + ")")
         .await();
 
-    for (int i = 0; i < 10; i++) {
-      tableEnv
-          .fromValues(schema.toSinkRowDataType(), row("<channel_id>", "<message_content>"))
-          .executeInsert("slack_alarm")
-          .await();
-    }
+    tableEnv
+        .fromValues(
+            schema.toSinkRowDataType(),
+            row(
+                CHANNEL_ID,
+                LocalDateTime.now()
+                    + ": Hello world message from "
+                    + testInfo.getTestClass().get().getName()
+                    + "#"
+                    + testInfo.getTestMethod().get().getName()))
+        .executeInsert("slack_alarm")
+        .await();
   }
 
   // @Test
