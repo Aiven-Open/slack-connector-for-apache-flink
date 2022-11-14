@@ -34,7 +34,6 @@ class FlinkSlackConnectorIntegrationTest {
   void testSink(TestInfo testInfo) throws Exception {
 
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-    env.setParallelism(8);
     StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
     final ResolvedSchema schema =
