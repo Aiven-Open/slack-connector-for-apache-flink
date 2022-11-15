@@ -1,12 +1,9 @@
 package io.aiven.flink.connectors.slack.sink;
 
-import static org.apache.flink.table.types.logical.utils.LogicalTypeChecks.isCompositeType;
-
 import com.slack.api.Slack;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,11 +14,11 @@ import java.util.Set;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.types.DataType;
-import org.apache.flink.table.types.logical.LogicalType;
-import org.apache.flink.table.types.logical.LogicalTypeRoot;
-import org.apache.flink.table.types.logical.utils.LogicalTypeChecks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
+  private static final Logger LOG = LoggerFactory.getLogger(FlinkSlackSinkFunction.class);
   private final String token;
   private final DataType rowType;
 
@@ -32,11 +29,11 @@ public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
 
   @Override
   public void invoke(RowData value, Context context) throws Exception {
-    Map<SlackColumns, String> map = new EnumMap<>(SlackColumns.class);
-    List<String> columnNames = getFieldNames(rowType);
+    Map<SlackMessageColumns, String> map = new EnumMap<>(SlackMessageColumns.class);
+    List<String> columnNames = DataType.getFieldNames(rowType);
     for (int i = 0; i < rowType.getChildren().size(); i++) {
       if (value.getString(i) != null) {
-        map.put(SlackColumns.of(columnNames.get(i)), value.getString(i).toString());
+        map.put(SlackMessageColumns.of(columnNames.get(i)), value.getString(i).toString());
       }
     }
     ChatPostMessageResponse response =
@@ -46,27 +43,28 @@ public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
                 r -> {
                   ChatPostMessageRequest.ChatPostMessageRequestBuilder
                       chatPostMessageRequestBuilder =
-                          r.token(token).channel(map.get(SlackColumns.CHANNEL));
-                  if (map.containsKey(SlackColumns.BLOCKS_AS_STRING)) {
+                          r.token(token).channel(map.get(SlackMessageColumns.CHANNEL));
+                  if (map.containsKey(SlackMessageColumns.BLOCKS_AS_STRING)) {
                     chatPostMessageRequestBuilder =
                         chatPostMessageRequestBuilder.blocksAsString(
-                            map.get(SlackColumns.BLOCKS_AS_STRING));
+                            map.get(SlackMessageColumns.BLOCKS_AS_STRING));
                   } else {
                     chatPostMessageRequestBuilder =
-                        chatPostMessageRequestBuilder.text(map.get(SlackColumns.TEXT));
+                        chatPostMessageRequestBuilder.text(map.get(SlackMessageColumns.TEXT));
                   }
-                  if (map.containsKey(SlackColumns.THREAD)) {
+                  if (map.containsKey(SlackMessageColumns.THREAD)) {
                     chatPostMessageRequestBuilder =
-                        chatPostMessageRequestBuilder.threadTs(map.get(SlackColumns.THREAD));
+                        chatPostMessageRequestBuilder.threadTs(map.get(SlackMessageColumns.THREAD));
                   }
                   return chatPostMessageRequestBuilder;
                 });
     if (!response.isOk()) {
+      LOG.error(response.getError());
       throw new RuntimeException(response.getError());
     }
   }
 
-  public enum SlackColumns {
+  public enum SlackMessageColumns {
     BLOCKS_AS_STRING("blocks_as_str", "blocks_as_string", "formatted"),
     CHANNEL("channel_id", "channel"),
     THREAD("thread_id", "thread"),
@@ -74,17 +72,17 @@ public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
 
     private final Set<String> names = new HashSet<>();
 
-    private static final Map<String, SlackColumns> NAMES2COLUMNS = new HashMap<>();
+    private static final Map<String, SlackMessageColumns> NAMES2COLUMNS = new HashMap<>();
 
     static {
-      for (SlackColumns slackColumns : values()) {
+      for (SlackMessageColumns slackColumns : values()) {
         for (String s : slackColumns.names) {
           NAMES2COLUMNS.put(s, slackColumns);
         }
       }
     }
 
-    SlackColumns(String columnName, String... secondaryNames) {
+    SlackMessageColumns(String columnName, String... secondaryNames) {
       names.add(columnName.toLowerCase(Locale.ROOT));
       if (secondaryNames != null) {
         for (String s : secondaryNames) {
@@ -93,8 +91,8 @@ public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
       }
     }
 
-    public static SlackColumns of(String value) {
-      SlackColumns val;
+    public static SlackMessageColumns of(String value) {
+      SlackMessageColumns val;
       if (value != null && (val = NAMES2COLUMNS.get(value.toLowerCase(Locale.ROOT))) != null) {
         return val;
       }
@@ -104,16 +102,5 @@ public class FlinkSlackSinkFunction extends RichSinkFunction<RowData> {
               + "'. Available column name: "
               + Arrays.toString(values()));
     }
-  }
-
-  // TODO: Replace this with DataType#getFieldNames with upgrade to Flink 1.15.x
-  private static List<String> getFieldNames(DataType dataType) {
-    final LogicalType type = dataType.getLogicalType();
-    if (type.getTypeRoot() == LogicalTypeRoot.DISTINCT_TYPE) {
-      return getFieldNames(dataType.getChildren().get(0));
-    } else if (isCompositeType(type)) {
-      return LogicalTypeChecks.getFieldNames(type);
-    }
-    return Collections.emptyList();
   }
 }

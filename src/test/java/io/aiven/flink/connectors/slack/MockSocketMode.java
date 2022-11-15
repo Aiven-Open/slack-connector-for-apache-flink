@@ -1,7 +1,7 @@
 package io.aiven.flink.connectors.slack;
 
 import com.slack.api.util.thread.ExecutorServiceFactory;
-import io.aiven.flink.connectors.slack.source.FlinkSlackConnectorTableSourceFactory;
+import io.aiven.flink.connectors.slack.source.SlackTableSourceFactory;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -19,8 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MockSocketMode extends WebSocketAdapter {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(FlinkSlackConnectorTableSourceFactory.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SlackTableSourceFactory.class);
   private final CountDownLatch closureLatch = new CountDownLatch(1);
 
   private final CopyOnWriteArrayList<Session> activeSessions = new CopyOnWriteArrayList<>();

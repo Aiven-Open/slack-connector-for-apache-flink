@@ -1,18 +1,17 @@
 package io.aiven.flink.connectors.slack;
 
+import static io.aiven.flink.connectors.slack.Constants.IDENTIFIER;
 import static org.apache.flink.table.api.Expressions.row;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
-import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.DataTypes;
-import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.catalog.Column;
 import org.apache.flink.table.catalog.ResolvedSchema;
-import org.apache.flink.types.Row;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -68,32 +67,53 @@ class FlinkSlackConnectorIntegrationTest {
         .await();
   }
 
-  // @Test
+  @Test
   public void testFlinkSource() throws Exception {
 
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-    env.setParallelism(8);
     StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
+    final String tableName = "testFlinkSourceTable";
+    final ResolvedSchema schema =
+        ResolvedSchema.of(
+            Column.metadata("channel_id", DataTypes.STRING().nullable(), "channel_id", false),
+            Column.metadata("message", DataTypes.STRING().nullable(), "message", false));
+    tableEnv.executeSql(constructCreateTableSql(schema, tableName)).await();
+    final String message =
+        "io.aiven.flink.connectors.slack.FlinkSlackConnectorIntegrationTest.testFlinkSource "
+            + System.nanoTime();
+    tableEnv
+        .fromValues(schema.toSinkRowDataType(), row(CHANNEL_ID, message))
+        .executeInsert(tableName)
+        .await();
     tableEnv.executeSql(
-        "CREATE TEMPORARY TABLE slack_alarm ( \n"
+        "CREATE TEMPORARY TABLE testFlinkSourceTable2 ( \n"
             + "  `ts` DECIMAL(16, 6),\n"
             + "  `channel` STRING,\n"
             + "  `type` STRING,\n"
-            + "  `client_msg_id` STRING,\n"
+            + "  `username` STRING,\n"
+            + "  `user` STRING,\n"
             + "  `text` STRING \n"
             + ") WITH (\n"
-            + "  'connector' = 'slack',"
-            + "  'apptoken' = '"
-            + APP_TOKEN
+            + "  'connector' = '"
+            + IDENTIFIER
+            + "',"
+            + "  'token' = '"
+            + BOT_TOKEN
+            + "',"
+            + "  'channel_id' = '"
+            + CHANNEL_ID
             + "'"
             + ")");
 
-    Table tableResult = tableEnv.sqlQuery("SELECT * FROM slack_alarm");
-
-    DataStream<Row> rowDataStream = tableEnv.toDataStream(tableResult);
-    rowDataStream.print();
-    env.execute("Slack connector example Job");
+    assertThat(
+            tableEnv
+                .executeSql(
+                    "SELECT count(1) FROM testFlinkSourceTable2 where text = '" + message + "'")
+                .collect()
+                .next()
+                .getField(0))
+        .isEqualTo(1L);
   }
 
   private String constructCreateTableSql(ResolvedSchema schema, String tableName) {
@@ -110,7 +130,10 @@ class FlinkSlackConnectorIntegrationTest {
         result.append(",");
       }
     }
-    result.append(") WITH (\n  'connector' = 'slack',  'token' = '").append(BOT_TOKEN).append("')");
+    result
+        .append(") WITH (\n  'connector' = '" + IDENTIFIER + "',  'token' = '")
+        .append(BOT_TOKEN)
+        .append("')");
     return result.toString();
   }
 
