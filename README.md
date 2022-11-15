@@ -3,12 +3,24 @@
 ## Compatibility matrix
 
 | Apache Flink    | Slack Connector for Apache Flink | Release date |
------------------|----------------------------------|--------------
+|-----------------|----------------------------------|--------------|
 | 1.14.x - 1.15.x | v1.0                             | 17.10.2022   |
 | 1.15.x - 1.16.x | v2.0                             | TBD          |
 
 To start using Slack connector for Flink put `flink-slack-connector-<version>.jar`
 to `lib/` folder of Flink and restart Flink.
+
+## Build locally
+```bash
+./mvnw clean verify -DskipTests
+```
+or in case of Windows
+```
+mvnw clean verify -DskipTests
+```
+To build with tests it is required to define `SLACK_FOR_FLINK_BOT_TOKEN` and `SLACK_FOR_FLINK_CHANNEL_ID` env variables.
+`SLACK_FOR_FLINK_BOT_TOKEN` contains Bot User OAuth Token (see below)
+`SLACK_FOR_FLINK_CHANNEL_ID` contains a channel id used during unit tests
 
 ## Set-up Slack Application
 1. Create your Slack app at [Slack API](https://api.slack.com/apps)
@@ -60,7 +72,7 @@ INSERT INTO slack_example_with_reply VALUES('CHANNEL_ID', CAST(NULL AS STRING), 
 ```
 
 ### Send formatted message
-To send formatted message there should be `blocks_as_str` column
+To send formatted message there should be `blocks_as_str` or `formatted` column
 ```sql
 CREATE TEMPORARY TABLE slack_example_formatted (
     `channel_id` STRING,

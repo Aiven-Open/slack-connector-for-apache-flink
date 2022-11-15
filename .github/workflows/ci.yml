@@ -1,11 +1,14 @@
 
-name: Run all the Unit test cases and package the jar
+name: CI
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
+env:
+  mvn_options: --batch-mode -Dstyle.color=always -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss.SSS
 
 jobs:
   build:
@@ -24,4 +27,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        env:
+          SLACK_FOR_FLINK_BOT_TOKEN: ${{ secrets.SLACK_FOR_FLINK_BOT_TOKEN }}
+          SLACK_FOR_FLINK_CHANNEL_ID: ${{ secrets.SLACK_FOR_FLINK_CHANNEL_ID }}
+        run: mvn $mvn_options package --file pom.xml
