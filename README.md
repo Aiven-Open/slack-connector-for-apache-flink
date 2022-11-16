@@ -5,7 +5,10 @@
 | Apache Flink    | Slack Connector for Apache Flink | Release date |
 |-----------------|----------------------------------|--------------|
 | 1.14.x - 1.15.x | v1.0                             | 17.10.2022   |
-| 1.15.x - 1.16.x | v2.0                             | TBD          |
+| 1.15.x          | v1.0.1-1.15                      | 16.11.2022   |
+| 1.16.x          | v1.0.1-1.16                      | 16.11.2022   |
+Since 1.0.1 versioning looks like `<major>.<minor>.<patch>-<flink-major>.<flink-minor>` 
+according to [Externalized Connector development](https://cwiki.apache.org/confluence/display/FLINK/Externalized+Connector+development)
 
 To start using Slack connector for Flink put `flink-slack-connector-<version>.jar`
 to `lib/` folder of Flink and restart Flink.
@@ -92,7 +95,8 @@ And similar message replying to `THREAD_ID`
 INSERT INTO slack_example_formatted VALUES('CHANNEL_ID', 'THREAD_ID', '[{"type": "divider"}]');
 ```
 
-A more examples of formatted messages could be found at [block-kit-builder](https://app.slack.com/block-kit-builder)
+More examples of formatted messages could be found at [block-kit-builder](https://app.slack.com/block-kit-builder)
+
 Note: in `formatted` there should be passed only value for `blocks`.
 
 ## Source
