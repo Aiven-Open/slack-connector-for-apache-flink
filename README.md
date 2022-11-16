@@ -7,6 +7,7 @@
 | 1.14.x - 1.15.x | v1.0                             | 17.10.2022   |
 | 1.15.x          | v1.0.1-1.15                      | 16.11.2022   |
 | 1.16.x          | v1.0.1-1.16                      | 16.11.2022   |
+
 Since 1.0.1 versioning looks like `<major>.<minor>.<patch>-<flink-major>.<flink-minor>` 
 according to [Externalized Connector development](https://cwiki.apache.org/confluence/display/FLINK/Externalized+Connector+development)
 
