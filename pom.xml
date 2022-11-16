@@ -6,7 +6,7 @@
 
     <groupId>io.aiven.flink</groupId>
     <artifactId>flink-slack-connector</artifactId>
-    <version>1.0.1-1.16</version>
+    <version>1.0.2-SNASHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
