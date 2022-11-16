@@ -95,6 +95,23 @@ INSERT INTO slack_example_formatted VALUES('CHANNEL_ID', 'THREAD_ID', '[{"type":
 A more examples of formatted messages could be found at [block-kit-builder](https://app.slack.com/block-kit-builder)
 Note: in `formatted` there should be passed only value for `blocks`.
 
+## Source
+For querying there are available `type`, `ts`, `user`, `text`, `team`, `thread_ts` columns.
+While querying it is also required to specify `channel_id` like 
+```sql
+CREATE TEMPORARY TABLE table_for_quering (
+    `ts` DECIMAL(16, 6),
+    `channel` STRING,
+    `type` STRING,
+    `username` STRING,
+    `user` STRING,
+    `text` STRING 
+) WITH (
+    'connector' = 'slack',
+    'token' = :BOT_TOKEN,
+    'channel_id' = :CHANNEL_ID
+);
+```
 ## Trademarks
 
 Apache Flink is either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries.

@@ -7,14 +7,18 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import org.apache.flink.annotation.Experimental;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 import org.apache.flink.table.data.DecimalData;
 import org.apache.flink.table.data.GenericRowData;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.data.StringData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class FlinkSlackConnectorSourceFunction extends RichSourceFunction<RowData> {
-
+@Experimental
+public class FlinkSlackAppSourceFunction extends RichSourceFunction<RowData> {
+  private static final Logger LOG = LoggerFactory.getLogger(FlinkSlackAppSourceFunction.class);
   private static final String EVENT_TAG = "event";
   private final String appToken;
   private final List<String> columnNames;
@@ -34,13 +38,13 @@ public class FlinkSlackConnectorSourceFunction extends RichSourceFunction<RowDat
           "text",
           (event) -> StringData.fromString(event.get("text").getAsString()));
 
-  public FlinkSlackConnectorSourceFunction(String appToken, List<String> columnNames) {
+  public FlinkSlackAppSourceFunction(String appToken, List<String> columnNames) {
     this.columnNames = columnNames;
     this.appToken = appToken;
   }
 
   @Override
-  public void run(SourceContext<RowData> ctx) throws Exception {
+  public void run(SourceContext<RowData> ctx) {
     try (SocketModeClient client = Slack.getInstance().socketMode(appToken)) {
       client.addEventsApiEnvelopeListener(
           envelope -> {
@@ -57,7 +61,8 @@ public class FlinkSlackConnectorSourceFunction extends RichSourceFunction<RowDat
         Thread.sleep(500);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      LOG.error("Exception", e);
+      throw new RuntimeException(e);
     }
   }
 

@@ -1,7 +1,7 @@
 package io.aiven.flink.connectors.slack.source;
 
-import java.util.List;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
+import org.apache.flink.table.catalog.ResolvedSchema;
 import org.apache.flink.table.connector.ChangelogMode;
 import org.apache.flink.table.connector.source.DynamicTableSource;
 import org.apache.flink.table.connector.source.ScanTableSource;
@@ -10,14 +10,19 @@ import org.apache.flink.table.data.RowData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FlinkSlackConnectorTableSource implements ScanTableSource {
-  private static final Logger LOG = LoggerFactory.getLogger(FlinkSlackConnectorTableSource.class);
+public class SlackTableSource implements ScanTableSource {
+  private static final Logger LOG = LoggerFactory.getLogger(SlackTableSource.class);
   private final String appToken;
-  private final List<String> columnNames;
+  private final String botToken;
+  private final String channelId;
+  private final ResolvedSchema schema;
 
-  public FlinkSlackConnectorTableSource(String appToken, List<String> columnNames) {
+  public SlackTableSource(
+      String appToken, String botToken, String channelId, ResolvedSchema schema) {
     this.appToken = appToken;
-    this.columnNames = columnNames;
+    this.botToken = botToken;
+    this.channelId = channelId;
+    this.schema = schema;
   }
 
   @Override
@@ -29,14 +34,16 @@ public class FlinkSlackConnectorTableSource implements ScanTableSource {
   public ScanRuntimeProvider getScanRuntimeProvider(ScanContext scanContext) {
 
     final SourceFunction<RowData> sourceFunction =
-        new FlinkSlackConnectorSourceFunction(appToken, columnNames);
+        appToken == null
+            ? new FlinkSlackBotSourceFunction(botToken, channelId, schema.getColumnNames())
+            : new FlinkSlackAppSourceFunction(appToken, schema.getColumnNames());
 
     return SourceFunctionProvider.of(sourceFunction, false);
   }
 
   @Override
   public DynamicTableSource copy() {
-    return new FlinkSlackConnectorTableSource(appToken, columnNames);
+    return new SlackTableSource(appToken, botToken, channelId, schema);
   }
 
   @Override
