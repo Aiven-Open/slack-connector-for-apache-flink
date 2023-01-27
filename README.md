@@ -27,11 +27,15 @@ To build with tests it is required to define `SLACK_FOR_FLINK_BOT_TOKEN` and `SL
 `SLACK_FOR_FLINK_CHANNEL_ID` contains a channel id used during unit tests
 
 ## Set-up Slack Application
+
 1. Create your Slack app at [Slack API](https://api.slack.com/apps)
 2. In Oauth & Permissions in Scopes add `chat:write`
 3. In Oauth & Permissions copy `Bot User OAuth Token` and use for placeholder `BOT_USER_OAUTH_ACCESS_TOKEN`
 4. Reinstall the app
-5. Add app to the channel where it should post 
+5. Add app to the channel where it should post by mentioning the app name in a message (e.g. `@APP_NAME`) and confirming the invitation 
+6. Collect the Channel Id by right clicking on the channel name -> View Channel details and scrolling at the bottom of the window. The channel id should start with `C` and have a format similar to `CXXXXXXXXX` 
+
+[Channel ID shown at the bottom of the window](/img/channel_id.png)
 
 ## Send message
 
@@ -117,6 +121,14 @@ CREATE TEMPORARY TABLE table_for_quering (
     'channel_id' = :CHANNEL_ID
 );
 ```
+
+## Common errors
+
+When creating a Flink job, the following are common error messages and related solutions:
+
+* ``not_in_channel``: The app has the right permissions, but is not invited in the channel where it should post. Mention the app name in a message (e.g. `@APP_NAME`) and confirm the invitation.
+
+
 ## Trademarks
 
 Apache Flink is either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries.
