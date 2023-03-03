@@ -5,13 +5,16 @@ import static io.aiven.flink.connectors.bigquery.sink.BigQueryConfigOptions.PROJ
 import static io.aiven.flink.connectors.bigquery.sink.BigQueryConfigOptions.SERVICE_ACCOUNT;
 import static io.aiven.flink.connectors.bigquery.sink.BigQueryConfigOptions.TABLE;
 
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import org.apache.flink.configuration.ConfigOption;
 import org.apache.flink.table.connector.sink.DynamicTableSink;
 import org.apache.flink.table.factories.DynamicTableSinkFactory;
 import org.apache.flink.table.factories.FactoryUtil;
-import org.apache.flink.table.types.DataType;
 
 public class BigQueryTableSinkFactory implements DynamicTableSinkFactory {
   private static final Set<ConfigOption<?>> REQUIRED_OPTIONS =
@@ -21,15 +24,20 @@ public class BigQueryTableSinkFactory implements DynamicTableSinkFactory {
   public DynamicTableSink createDynamicTableSink(Context context) {
     FactoryUtil.TableFactoryHelper helper = FactoryUtil.createTableFactoryHelper(this, context);
     helper.validate();
-    final DataType rowType = context.getCatalogTable().getResolvedSchema().toPhysicalRowDataType();
+    Credentials credentials;
+    try (FileInputStream fis = new FileInputStream(helper.getOptions().get(SERVICE_ACCOUNT))) {
+      credentials = ServiceAccountCredentials.fromStream(fis);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    BigQueryConnectionOptions options =
+        new BigQueryConnectionOptions(
+            helper.getOptions().get(PROJECT_ID),
+            helper.getOptions().get(DATASET),
+            helper.getOptions().get(TABLE),
+            credentials);
     return new BigQuerySink(
-        context.getCatalogTable(),
-        context.getCatalogTable().getResolvedSchema(),
-        rowType,
-        helper.getOptions().get(SERVICE_ACCOUNT),
-        helper.getOptions().get(PROJECT_ID),
-        helper.getOptions().get(DATASET),
-        helper.getOptions().get(TABLE));
+        context.getCatalogTable(), context.getCatalogTable().getResolvedSchema(), options);
   }
 
   @Override

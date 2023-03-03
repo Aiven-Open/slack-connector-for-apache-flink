@@ -1,31 +1,27 @@
 package io.aiven.flink.connectors.bigquery.sink;
 
+import com.google.auth.Credentials;
+import com.google.cloud.bigquery.TableId;
 import java.io.Serializable;
 
 public class BigQueryConnectionOptions implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private final String projectId;
+  private final Credentials credentials;
 
-  private final String dataset;
+  private final TableId tableId;
 
-  private final String tableName;
-
-  public BigQueryConnectionOptions(String projectId, String dataset, String tableName) {
-    this.projectId = projectId;
-    this.dataset = dataset;
-    this.tableName = tableName;
+  public BigQueryConnectionOptions(
+      String projectId, String dataset, String tableName, Credentials credentials) {
+    this.tableId = TableId.of(projectId, dataset, tableName);
+    this.credentials = credentials;
   }
 
-  public String getProjectId() {
-    return projectId;
+  public TableId getTableId() {
+    return tableId;
   }
 
-  public String getDataset() {
-    return dataset;
-  }
-
-  public String getTableName() {
-    return tableName;
+  public Credentials getCredentials() {
+    return credentials;
   }
 }

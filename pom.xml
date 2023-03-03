@@ -10,22 +10,24 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <assertj.core.version>3.23.1</assertj.core.version>
-        <error_prone_core.version>2.9.0</error_prone_core.version>
-        <flink.version>1.15.2</flink.version>
-        <google-cloud-bigquery.version>2.15.0</google-cloud-bigquery.version>
+        <assertj.core.version>3.24.2</assertj.core.version>
+        <error_prone_core.version>2.18.0</error_prone_core.version>
+        <flink.version>1.16.0</flink.version>
+        <google-cloud-bigquery.version>2.23.0</google-cloud-bigquery.version>
         <java.version>11</java.version>
-        <junit.version>5.9.0</junit.version>
+        <junit.version>5.9.2</junit.version>
+        <googleJavaFormat.version>1.14.0</googleJavaFormat.version>
         <guava.version>31.0.1-jre</guava.version>
-        <log4j.version>2.19.0</log4j.version>
+        <log4j.version>2.20.0</log4j.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
-        <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
+        <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M9</maven-surefire-plugin.version>
         <scala.binary.version>2.12</scala.binary.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
-        <spotless-maven-plugin.version>2.20.2</spotless-maven-plugin.version>
+        <spotless-maven-plugin.version>2.34.0</spotless-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -55,6 +57,13 @@
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-common</artifactId>
+            <version>${flink.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
             <artifactId>flink-json</artifactId>
             <version>${flink.version}</version>
             <scope>compile</scope>
@@ -74,6 +83,18 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
@@ -128,7 +149,7 @@
                 <configuration>
                     <java>
                         <googleJavaFormat>
-                            <version>1.14.0</version>
+                            <version>${googleJavaFormat.version}</version>
                             <style>GOOGLE</style>
                         </googleJavaFormat>
                         <removeUnusedImports/>
@@ -141,6 +162,27 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>${java.version}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
