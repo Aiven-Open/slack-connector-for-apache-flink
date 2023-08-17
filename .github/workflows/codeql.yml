@@ -73,6 +73,9 @@ jobs:
         java-version: 11
 
     - name: Build with Maven
+      env:
+        SLACK_FOR_FLINK_BOT_TOKEN: ${{ secrets.SLACK_FOR_FLINK_BOT_TOKEN }}
+        SLACK_FOR_FLINK_CHANNEL_ID: ${{ secrets.SLACK_FOR_FLINK_CHANNEL_ID }}
       run: ./mvnw verify
 
     - name: Perform CodeQL Analysis
